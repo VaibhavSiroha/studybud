@@ -8,7 +8,7 @@
     }
 </style>
 
-<h1>Home Template</h1>
+
 
 <div class="home-container">
     <div>
@@ -23,7 +23,9 @@
             </div>
         {% endfor %}
     </div>
+
     <div>
+        <H5>{{room_count}} rooms available</H5>
         <a href="{% url 'create-room' %}">Create Room</a>
         <hr>
         <div>
