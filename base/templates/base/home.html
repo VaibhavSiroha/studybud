@@ -1,67 +1,23 @@
-{% extends 'main.html' %}
-{% block content %}
+{% extends 'main.html' %} {% block content %}
 
 <style>
-    .home-container{
-        display: grid;
-        grid-template-columns: 1fr 2fr 1fr;
-    }
+  .home-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+  }
 </style>
 
-
-
 <div class="home-container">
-    <div>
-        <h3>Browse Topics</h3>
-        <hr>
-        <div>
-            <a href="{% url 'home' %}">All</a>
-        </div>
-        {% for topic in topics %}
-            <div>
-                <a href="{% url 'home' %}?q={{topic.name}}">{{topic}}</a>
-            </div>
-        {% endfor %}
-    </div>
+  <div>{% include 'base/topics_component.html' %}</div>
 
-    <div>
-        <H5>{{room_count}} rooms available</H5>
-        <a href="{% url 'create-room' %}">Create Room</a>
-        <hr>
-        <div>
-            {% for room in rooms %}
-                <div>
-                    {% if request.user == room.host %}
-                    <a href="{% url 'update-room' room.id %}">EDIT</a>
-                    <a href="{% url 'delete-room' room.id %}">DELETE</a>
-                    {% endif %}
-                    <span>@{{room.host.username}}</span>
-                    <h5>{{room.id}} -- <a href="{% url 'room' room.id %}">{{room.name}}</a></h5>
-                    <small>{{room.topic.name}}</small>
-                    <hr>
-                </div>
+  <div>
+    <h5>{{room_count}} rooms available</h5>
+    <a href="{% url 'create-room' %}">Create Room</a>
+    <hr />
+    <div>{% include 'base/feed_component.html' %}</div>
+  </div>
 
-        {% endfor %}
-
-        </div>
-    </div>
-
-    <div >
-        <h3>Recent Activity</h3>
-        <hr>
-        {% for message in room_messages %}
-        <div>
-            <small>@{{message.user}} {{message.created|timesince}}</small>
-            <small>replied to room "{{message.room}}"</small>
-            <p>said "{{message}}"</p>
-            {% if request.user == message.user %}
-            <a href="{% url 'delete-message' message.id %}">Delete</a>
-            {% endif %}
-            <hr>
-        </div>
-        {% endfor %}
-    </div>
-    
+  <div>{% include 'base/activity_component.html' %}</div>
 </div>
 
 {% endblock content %}
