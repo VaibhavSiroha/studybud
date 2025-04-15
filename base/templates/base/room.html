@@ -44,6 +44,12 @@
   </div>
   <div>
     <h3>Participents</h3>
+    <hr>
+    {% for user in participents %}
+        <div>
+            <p>@{{user.username}}</p>
+        </div>
+    {% endfor %}
   </div>
 
 </div>
