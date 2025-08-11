@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'base.apps.BaseConfig',
     
     'rest_framework',
+    'channels',
 ]
 
 AUTH_USER_MODEL='base.User'
@@ -64,6 +65,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'studybud.wsgi.application'
+ASGI_APPLICATION = 'studybud.asgi.application'
+
+# In-memory channel layer for development
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    }
+}
 
 
 # Database

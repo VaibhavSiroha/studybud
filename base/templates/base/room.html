@@ -113,9 +113,9 @@
 
       </div>
       <div class="room__message">
-        <form action="" method="POST">
+        <form id="chat-form" action="" method="POST">
           {% csrf_token %}
-          <input name="body" placeholder="Write your message here..." />
+          <input id="chat-message-input" name="body" placeholder="Write your message here..." autocomplete="off" />
         </form>
       </div>
     </div>
@@ -141,5 +141,56 @@
     <!--  End -->
   </div>
 </main>
-<script src="script.js"></script>
+<script>
+  (function() {
+    const roomId = "{{ room.id }}";
+    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    const socketUrl = `${protocol}://${window.location.host}/ws/rooms/${roomId}/`;
+    const chatSocket = new WebSocket(socketUrl);
+
+    const threads = document.querySelector('.threads');
+    const input = document.getElementById('chat-message-input');
+    const form = document.getElementById('chat-form');
+
+    chatSocket.onmessage = function(e) {
+      const data = JSON.parse(e.data);
+      const wrapper = document.createElement('div');
+      wrapper.className = 'thread';
+      wrapper.innerHTML = `
+        <div class="thread__top">
+          <div class="thread__author">
+            <div class="thread__authorInfo">
+              <div class="avatar avatar--small">
+                <img src="${data.user_avatar_url || '/static/images/avatar.svg'}" />
+              </div>
+              <span>@${data.username}</span>
+            </div>
+            <span class="thread__date">just now</span>
+          </div>
+        </div>
+        <div class="thread__details">${data.message}</div>
+      `;
+      threads.prepend(wrapper);
+    };
+
+    chatSocket.onclose = function() {
+      console.warn('WebSocket closed unexpectedly');
+    };
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const value = input.value.trim();
+      if (!value) return;
+      chatSocket.send(JSON.stringify({ message: value }));
+      input.value = '';
+    });
+
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        form.requestSubmit();
+      }
+    });
+  })();
+</script>
 {% endblock content %}
